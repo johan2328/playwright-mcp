@@ -1,0 +1,22 @@
+name: Build & Deploy Playwright MCP
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run build        # si usas TS
+      - run: npx playwright install --with-deps
+      - run: zip -r release.zip . -x "node_modules/*" ".git/*"
+      - uses: azure/webapps-deploy@v3
+        with:
+          app-name: lab-bapro-gfdtdrcpf5ddg8fk.centralus-01.azurewebsites.net
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+          package: release.zip
