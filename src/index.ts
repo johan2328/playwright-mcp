@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-import { Connection, createConnection as createConnectionImpl } from './connection.js';
+import express from 'express';
+import { scrapeRouter } from './routes/scrape';
 
-import type { Config } from '../config.js';
+const app = express();
+app.use('/scrape', scrapeRouter);
 
-export async function createConnection(config: Config = {}): Promise<Connection> {
-  return createConnectionImpl(config);
-}
+app.listen(process.env.PORT || 3000, () =>
+  console.log('Playwright MCP + scrape route ready'),
+);
